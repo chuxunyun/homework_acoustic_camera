@@ -1,0 +1,261 @@
+:root {
+  /* 取自参考项目 frontend/src/design/tokens.css（oklch 换算成 hex） */
+  --background: #f7fafe;
+  --foreground: #0e1623;
+  --card: #ffffff;
+  --primary: #185a95;
+  --primary-foreground: #fcfcfc;
+  --secondary: #eaf0f7;
+  --muted: #edf0f6;
+  --muted-foreground: #535b67;
+  --accent: #dceaf8;
+  --border: #dde2ea;
+  --sidebar: #f7fafe;
+  --sidebar-foreground: #202938;
+  --sidebar-accent: #e0efff;
+  --sidebar-border: #dfe5ed;
+
+  --radius-md: 0.48rem;
+
+  --sidebar-w: 216px;
+  --sidebar-w-collapsed: 64px;
+
+  --font-sans: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC",
+    -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; border-color: var(--border); }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb {
+  background: color-mix(in oklab, var(--muted-foreground) 32%, transparent);
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+
+.app { display: flex; height: 100%; }
+
+/* ---------------- 侧边栏 ---------------- */
+.sidebar {
+  width: var(--sidebar-w);
+  flex: 0 0 var(--sidebar-w);
+  display: flex;
+  flex-direction: column;
+  background: var(--sidebar);
+  border-right: 1px solid var(--sidebar-border);
+  transition: width .3s ease, flex-basis .3s ease;
+  overflow: hidden;
+}
+.sidebar.collapsed {
+  width: var(--sidebar-w-collapsed);
+  flex-basis: var(--sidebar-w-collapsed);
+}
+
+/* 头部 */
+.sidebar-head {
+  height: 64px;
+  flex: 0 0 64px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 10px;
+}
+.collapse-btn {
+  width: 36px; height: 36px;
+  flex: 0 0 36px;
+  display: grid; place-items: center;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--muted-foreground);
+  cursor: pointer;
+  transition: background-color .15s ease, color .15s ease;
+}
+.collapse-btn:hover { background: var(--sidebar-accent); color: var(--foreground); }
+.collapse-btn .ico-expand { display: none; }
+.sidebar.collapsed .collapse-btn .ico-collapse { display: none; }
+.sidebar.collapsed .collapse-btn .ico-expand { display: block; }
+
+.brand-wrap {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+.logo {
+  width: 34px; height: 34px;
+  flex: 0 0 34px;
+  display: grid; place-items: center;
+  border-radius: 9px;
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+.brand {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: .2px;
+  white-space: nowrap;
+}
+
+.sidebar.collapsed .sidebar-head {
+  justify-content: center;
+  padding: 0;
+}
+.sidebar.collapsed .brand-wrap { display: none; }
+
+/* 导航 */
+.nav {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 20px 16px;
+}
+.nav-group + .nav-group { margin-top: 24px; }
+.nav-label {
+  margin: 0;
+  padding: 0 8px 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  white-space: nowrap;
+}
+.nav ul { list-style: none; margin: 0; padding: 0; }
+.nav li + li { margin-top: 4px; }
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--muted-foreground);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color .15s ease, color .15s ease;
+}
+.nav-item svg { width: 17px; height: 17px; flex: 0 0 17px; }
+.nav-item:hover { background: var(--sidebar-accent); color: var(--foreground); }
+.nav-item.active {
+  background: var(--sidebar-accent);
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.sidebar.collapsed .nav { padding: 16px 12px; }
+.sidebar.collapsed .nav-label { display: none; }
+.sidebar.collapsed .nav-group + .nav-group { margin-top: 16px; }
+.sidebar.collapsed .nav-item {
+  justify-content: center;
+  gap: 0;
+  padding: 10px 0;
+}
+.sidebar.collapsed .nav-item span { display: none; }
+
+/* 底部 */
+.sidebar-foot {
+  padding: 14px 16px 16px;
+  border-top: 1px solid var(--sidebar-border);
+}
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 3px 0;
+  font-size: 13px;
+  color: var(--muted-foreground);
+  white-space: nowrap;
+}
+.info-row b {
+  font-weight: 500;
+  color: var(--sidebar-foreground);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 16px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity .15s ease, background-color .15s ease;
+}
+.btn-primary {
+  width: 100%;
+  margin-top: 12px;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: 0 1px 2px rgba(16, 32, 64, .08);
+}
+.btn-primary:hover { opacity: .9; }
+.btn-primary.paused {
+  background: var(--card);
+  color: var(--primary);
+  border-color: var(--border);
+  box-shadow: none;
+}
+
+/* 收起态：只留一个方形图标按钮 */
+.btn-ico { display: none; }
+
+.sidebar.collapsed .info-row { display: none; }
+.sidebar.collapsed .sidebar-foot {
+  padding: 12px 0 16px;
+  display: flex;
+  justify-content: center;
+}
+.sidebar.collapsed .btn-primary {
+  width: 40px;
+  height: 40px;
+  margin: 0;
+  padding: 0;
+}
+.sidebar.collapsed .btn-label { display: none; }
+.sidebar.collapsed .btn-ico { display: block; }
+.sidebar.collapsed .btn-ico.ico-play { display: none; }
+.sidebar.collapsed .btn.paused .ico-pause { display: none; }
+.sidebar.collapsed .btn.paused .ico-play { display: block; }
+
+/* ---------------- 屏幕 ---------------- */
+.screen {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  background: #fff;
+  overflow: hidden;
+}
+.screen canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}

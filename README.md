@@ -26,6 +26,7 @@ src/renderer.js     Canvas 2D 绘制声场
 src/field.js        合成声场（后面换成真实波束形成输出）
 src/colormap.js     铁红色标 LUT
 src/style.css       全部样式
+public/logo.png     侧边栏图标（裁切自 bb_png/IMG_4828.PNG）
 ```
 
 ## 当前进度

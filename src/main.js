@@ -1,19 +1,34 @@
 import './style.css'
 import { createMockField } from './field.js'
 import { createRenderer } from './renderer.js'
+import { initPrinciple, setPrincipleActive } from './principle.js'
 
 const $ = (id) => document.getElementById(id)
 
 const sidebar = $('sidebar')
 const collapseBtn = $('btn-collapse')
-const screenEl = document.querySelector('.screen')
 const canvas = $('heat')
 const renderer = createRenderer(canvas)
 const sample = createMockField()
 
+const VIEW_EL = {
+  live: document.querySelector('.view[data-view="live"]'),
+  principle: document.querySelector('.view[data-view="principle"]'),
+  empty: document.querySelector('.view[data-view="empty"]'),
+}
+
+const TITLES = {
+  live: '实时显示',
+  record: '录制回放',
+  calib: '阵列标定',
+  device: '设备设置',
+  principle: '原理分析',
+}
+
 const STORE_KEY = 'acoustic-sidebar-collapsed'
 
 let running = true
+let live = true
 let simT = 0
 let last = performance.now()
 let frames = 0
@@ -27,7 +42,6 @@ function applyCollapsed(v) {
   collapseBtn.title = tip
   collapseBtn.setAttribute('aria-label', tip)
 
-  /* 收起后图标没有文字，靠 title 提示 */
   document.querySelectorAll('.nav-item').forEach((el) => {
     if (v) el.title = el.dataset.label
     else el.removeAttribute('title')
@@ -44,14 +58,53 @@ collapseBtn.addEventListener('click', () => {
   applyCollapsed(collapsed)
 })
 
+/* ---------- 视图切换 ---------- */
+function show(name) {
+  const key = (name === 'live' || name === 'principle') ? name : 'empty'
+
+  Object.keys(VIEW_EL).forEach((k) => { VIEW_EL[k].hidden = k !== key })
+
+  if (key === 'empty') $('empty-title').textContent = TITLES[name] || name
+
+  live = key === 'live'
+  setPrincipleActive(key === 'principle')
+
+  if (live) requestAnimationFrame(fit)
+}
+
+function setActiveNav(name) {
+  document.querySelectorAll('.nav-item').forEach((b) => {
+    b.classList.toggle('active', b.dataset.view === name)
+  })
+}
+
+function navigate(name) {
+  setActiveNav(name)
+  show(name)
+  /* 用 replaceState 避免再触发 hashchange */
+  if (location.hash.slice(1) !== name) {
+    history.replaceState(null, '', '#' + name)
+  }
+}
+
+document.querySelectorAll('.nav-item').forEach((el) => {
+  el.addEventListener('click', () => navigate(el.dataset.view))
+})
+
+/* 支持 /#principle 直接打开某一页 */
+window.addEventListener('hashchange', () => {
+  navigate(location.hash.slice(1) || 'live')
+})
+
 /* ---------- 屏幕尺寸 ---------- */
 function fit() {
-  const r = screenEl.getBoundingClientRect()
+  if (!live) return
+  const r = VIEW_EL.live.getBoundingClientRect()
   if (r.width < 2 || r.height < 2) return
   renderer.resize(r.width, r.height)
 }
 
-new ResizeObserver(fit).observe(screenEl)
+new ResizeObserver(fit).observe(VIEW_EL.live)
 window.addEventListener('resize', fit)
 
 /* ---------- 主循环 ---------- */
@@ -62,7 +115,7 @@ function loop(now) {
   last = now
   if (running) simT += dt
 
-  renderer.draw(sample(simT))
+  if (live) renderer.draw(sample(simT))
   frames++
 
   if (now - fpsAt >= 400) {
@@ -73,15 +126,7 @@ function loop(now) {
   }
 }
 
-/* 导航：目前只切选中态，右侧内容接进来之前不换页 */
-document.querySelectorAll('.nav-item').forEach((el) => {
-  el.addEventListener('click', () => {
-    document.querySelectorAll('.nav-item').forEach((b) => b.classList.remove('active'))
-    el.classList.add('active')
-  })
-})
-
-/* 采集开关 */
+/* ---------- 采集开关 ---------- */
 const btn = $('btn-toggle')
 const btnLabel = btn.querySelector('.btn-label')
 btn.addEventListener('click', () => {
@@ -90,5 +135,8 @@ btn.addEventListener('click', () => {
   btn.classList.toggle('paused', !running)
 })
 
+/* ---------- 启动 ---------- */
+initPrinciple()
+navigate(location.hash.slice(1) || 'live')
 fit()
 requestAnimationFrame(loop)

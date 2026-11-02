@@ -130,7 +130,7 @@
             <section class="pcard">
               <div class="pcard-head">
                 <h3>物理场景</h3>
-                <p>红点为声源，下方为麦克风阵列。观察波前到达每个阵元的时间差。</p>
+                <p>波前到达各阵元的时间差</p>
               </div>
               <div class="pcard-body">
                 <canvas id="physicsCanvas" width="500" height="300"></canvas>
@@ -138,11 +138,38 @@
             </section>
 
             <section class="pcard">
-              <div class="pcard-head"><h3>控制</h3></div>
+              <div class="pcard-head">
+                <h3>空间谱 · 波束图</h3>
+                <p>主瓣越窄，方位分辨力越高</p>
+              </div>
+              <div class="pcard-body">
+                <canvas id="responseCanvas" width="400" height="250"></canvas>
+              </div>
+            </section>
+          </div>
+
+          <div class="pcol">
+            <section class="pcard">
+              <div class="pcard-head">
+                <h3>信号处理 · Delay &amp; Sum</h3>
+                <p><i class="lg lg-src"></i>原始信号　<i class="lg lg-scan"></i>校正信号　先对齐再叠加</p>
+              </div>
+              <div class="pcard-body">
+                <canvas id="signalCanvas" width="500" height="400"></canvas>
+              </div>
+            </section>
+          </div>
+
+          <div class="pcol">
+            <section class="pcard">
+              <div class="pcard-head">
+                <h3>控制</h3>
+                <p>拖动滑块观察波束变化</p>
+              </div>
               <div class="pcard-body">
                 <div class="field">
                   <div class="field-head">
-                    <label for="sourceAngleInput">真实声源角度</label>
+                    <label for="sourceAngleInput">声源角度</label>
                     <span class="val val-src"><b id="sourceAngleVal">30</b>°</span>
                   </div>
                   <input class="range range-src" type="range" id="sourceAngleInput" min="-80" max="80" value="30">
@@ -150,12 +177,11 @@
 
                 <div class="field">
                   <div class="field-head">
-                    <label for="scanAngleInput">算法扫描角度</label>
+                    <label for="scanAngleInput">扫描角度</label>
                     <span class="val val-scan"><b id="scanAngleVal">30</b>°</span>
-                    <button class="btn-sm" id="autoLockBtn">自动锁定声源</button>
                   </div>
                   <input class="range range-scan" type="range" id="scanAngleInput" min="-80" max="80" value="30">
-                  <p class="hint">扫描角对准声源时，下方蓝线完全重合，Σ 输出幅度达到最大。</p>
+                  <p class="hint">对准声源时蓝线重合，Σ 输出最大</p>
                 </div>
 
                 <div class="field">
@@ -166,29 +192,10 @@
                   <input class="range" type="range" id="numMicsInput" min="2" max="16" value="8">
                 </div>
 
-                <button class="btn btn-primary btn-block" id="togglePlayBtn">暂停动画</button>
-              </div>
-            </section>
-          </div>
-
-          <div class="pcol">
-            <section class="pcard">
-              <div class="pcard-head">
-                <h3>信号处理 · Delay &amp; Sum</h3>
-                <p><i class="lg lg-src"></i>原始信号（物理延时）　<i class="lg lg-scan"></i>校正信号（算法对齐）</p>
-              </div>
-              <div class="pcard-body">
-                <canvas id="signalCanvas" width="500" height="400"></canvas>
-              </div>
-            </section>
-
-            <section class="pcard">
-              <div class="pcard-head">
-                <h3>空间谱 · 波束图</h3>
-                <p>阵列对各方向的响应。主瓣越窄，方位分辨力越高。</p>
-              </div>
-              <div class="pcard-body center">
-                <canvas id="responseCanvas" width="400" height="250"></canvas>
+                <div class="field-actions">
+                  <button class="btn-sm" id="autoLockBtn">自动锁定声源</button>
+                  <button class="btn btn-primary btn-block" id="togglePlayBtn">暂停动画</button>
+                </div>
               </div>
             </section>
           </div>

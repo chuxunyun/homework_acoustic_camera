@@ -295,9 +295,10 @@ html, body {
 .pcard-head p { margin: 0 0 12px; font-size: 13px; color: var(--muted-foreground); }
 
 .pcard-body canvas {
-  width: 100%;
-  height: auto;
+  /* 尺寸由 principle.js 按容器宽度和视口高度算好写入，
+     CSS 只负责外观，不用 object-fit（canvas 上不可靠） */
   display: block;
+  margin: 0 auto;
   border: 1px solid var(--border);
   border-radius: 6px;
   background: #fff;

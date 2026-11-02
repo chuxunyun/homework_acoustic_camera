@@ -292,12 +292,47 @@ export function initPrinciple() {
   })
 
   syncUI()
+  fitCanvases()
 }
+
+/* 画布尺寸：左列「物理场景」占满宽度；
+   右列「信号处理 + 波束图」共用一份高度预算，取相同宽度，
+   保证两张卡片在常见分辨率下一屏装得下，又不会把图压得太窄。 */
+export function fitCanvases() {
+  if (!els) return
+
+  function setWidth(cv, w) {
+    const ar = cv.width / cv.height
+    cv.style.width = Math.round(w) + 'px'
+    cv.style.height = Math.round(w / ar) + 'px'
+  }
+
+  const boxP = els.phys.parentElement
+  if (boxP && boxP.clientWidth > 0) setWidth(els.phys, boxP.clientWidth)
+
+  const boxS = els.sig.parentElement
+  const boxR = els.resp.parentElement
+  if (!boxS || !boxR || !boxS.clientWidth) return
+
+  const cardW = Math.min(boxS.clientWidth, boxR.clientWidth)
+  const arS = els.sig.width / els.sig.height
+  const arR = els.resp.width / els.resp.height
+
+  /* 视口高度减去页面内边距、两张卡片的内边距与标题、以及它们之间的间距 */
+  const budget = Math.max(240, window.innerHeight - 250)
+  const w = Math.min(cardW, budget / (1 / arS + 1 / arR))
+
+  setWidth(els.sig, w)
+  setWidth(els.resp, w)
+}
+
+window.addEventListener('resize', function () { fitCanvases() })
 
 export function setPrincipleActive(v) {
   if (!els) return
   active = v
   if (v) {
+    fitCanvases()
     if (raf === null) raf = requestAnimationFrame(loop)
   } else {
     if (raf !== null) cancelAnimationFrame(raf)

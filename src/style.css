@@ -271,13 +271,31 @@ html, body {
 /* ---------------- 原理分析 ---------------- */
 .pgrid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.18fr) minmax(0, 1fr);
   gap: 16px;
-  align-items: start;
-  max-width: 1180px;
+  align-items: stretch;
+  height: 100%;
+  max-width: 1400px;
   margin: 0 auto;
 }
-.pcol { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+/* 两列都撑满视口高度，最后一张卡片吸收余量 → 底边自动对齐 */
+.pcol {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+  height: 100%;
+}
+.pcol > .pcard:last-child { flex: 1 1 auto; min-height: 0; }
+
+/* 左列的控制面板撑满剩余高度，滑块纵向均匀分布 */
+.pcol:first-child > .pcard:last-child { display: flex; flex-direction: column; }
+.pcol:first-child > .pcard:last-child .pcard-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
 
 .pcard {
   background: var(--card);

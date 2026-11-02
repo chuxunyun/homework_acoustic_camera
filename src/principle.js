@@ -314,14 +314,26 @@ export function fitCanvases() {
   const boxR = els.resp.parentElement
   if (!boxS || !boxR || !boxS.clientWidth) return
 
+  /* 卡片除画布之外的固定高度（内边距 + 标题 + 边框） */
+  function chromeOf(cv) {
+    const card = cv.closest('.pcard')
+    if (!card) return 93
+    const h = card.getBoundingClientRect().height - cv.getBoundingClientRect().height
+    return h > 20 ? h : 93
+  }
+
+  const grid = document.querySelector('.pgrid')
+  const H = grid ? grid.clientHeight : 0
+  const GAP = 16
   const cardW = Math.min(boxS.clientWidth, boxR.clientWidth)
+
   const arS = els.sig.width / els.sig.height
   const arR = els.resp.width / els.resp.height
 
-  /* 视口高度减去页面内边距、两张卡片的内边距与标题、以及它们之间的间距 */
-  const budget = Math.max(240, window.innerHeight - 250)
+  /* 右列：两张卡片 + 间距正好等于列高 */
+  let budget = H - GAP - chromeOf(els.sig) - chromeOf(els.resp)
+  if (!(budget > 100)) budget = Math.max(240, window.innerHeight - 250)
   const w = Math.min(cardW, budget / (1 / arS + 1 / arR))
-
   setWidth(els.sig, w)
   setWidth(els.resp, w)
 }
